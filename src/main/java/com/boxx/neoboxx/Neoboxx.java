@@ -1,5 +1,7 @@
 package com.boxx.neoboxx;
 
+import com.boxx.neoboxx.content.BoxxEntityTypes;
+import com.boxx.neoboxx.content.BoxxItems;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -26,17 +28,35 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
+@SuppressWarnings({"removal", "deprecation", "all"})
 @Mod(Neoboxx.MODID)
 public class Neoboxx
 {
+    private static Neoboxx INSTANCE;
     public static final String MODID = "neoboxx";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
+    private final IEventBus modEventBus;
 
     public Neoboxx(IEventBus modEventBus)
     {
+        this.modEventBus = modEventBus;
+        INSTANCE = this;
 
+        BoxxEntityTypes.staticInit();
+        BoxxItems.staticInit();
 
         NeoForge.EVENT_BUS.register(this);
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event)
+    {
+        // Do something when the server starts
+        LOGGER.info("HELLO from server starting");
+    }
+
+
+    public static IEventBus getEventBus() {
+        return INSTANCE.modEventBus;
     }
 }
